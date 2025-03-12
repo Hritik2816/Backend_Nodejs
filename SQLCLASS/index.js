@@ -104,6 +104,70 @@ app.patch("/user/:id", (req, res) => {
   }
 })
 
+app.get("/user/:id/delete", (req, res) => {
+  let { id } = req.params;
+  let q = "SELECT * FROM user WHERE id = ?";
+  connection.query(q, [id], (error, result) => {
+    if (error) {
+      console.error('Error executing query: ', error);
+      res.status(500).send('Error retrieving user');
+      return;
+    }
+    if (result.length === 0) {
+      res.status(404).send('User not found');
+      return;
+    }
+    let user = result[0];
+    res.render('delete.ejs', { user });
+  });
+});
+
+
+app.delete("/user/:id", (req, res) => {
+  let { id } = req.params;
+  let { password: formPassword, username: newUserName } = req.body;
+  let q = `SELECT * FROM user WHERE id = '${id}'`;
+  try {
+    connection.query(q, (error, result) => {
+      if (error) throw error;
+      let user = result[0];
+      if (formPassword != user.password) {
+        res.send('Password did not match');
+      }
+      else {
+        let q2 = `DELETE FROM user WHERE id = '${id}'`;
+        connection.query(q2, (error, result) => {
+          if (error) throw error;
+          res.redirect('/user');
+        })
+      }
+    });
+  } catch (error) {
+    console.log('Error connecting to database:')
+    res.send('SOMETHING WENT WRONG');
+  }
+});
+
+
+app.get("/createuser", (req, res) => {
+  res.render('createNewUser.ejs');
+})
+
+
+app.post("/user", (req, res) => {
+  let { username, email, password } = req.body;
+  let id = faker.string.uuid(); // Generate a unique ID for the new user
+  let q = "INSERT INTO user (id, name, email, password) VALUES (?, ?, ?, ?)";
+  connection.query(q, [id, username, email, password], (error, result) => {
+    if (error) {
+      console.error('Error executing query: ', error);
+      res.status(500).send('Error creating user');
+      return;
+    }
+    res.redirect('/');
+  });
+});
+
 
 
 app.listen(8080, () => {
