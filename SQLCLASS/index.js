@@ -3,7 +3,10 @@ const mysql = require('mysql');
 const express = require('express');
 const app = express();
 const path = require('path');
+const methodoverride = require('method-override');
 
+app.use(methodoverride('_method'));
+app.use(express.urlencoded({ extended: true }));
 app.set('view engine', 'ejs');
 app.set("views", path.join(__dirname, "views"));
 
@@ -44,6 +47,64 @@ app.get("/", (req, res) => {
 
   }
 });
+
+app.get("/user", (req, res) => {
+  let q = "SELECT * FROM user";
+  try {
+    connection.query(q, (error, result) => {
+      if (error) throw error;
+      res.render('user.ejs', { users: result });
+    })
+  } catch (error) {
+    console.log('Error connecting to database:')
+    res.send('SOMETHING WENT WRONG');
+  }
+})
+
+
+
+app.get("/user/:id/edit", (req, res) => {
+  let { id } = req.params;
+  let q = `SELECT * FROM user WHERE id = '${id}'`;
+  try {
+    connection.query(q, (error, result) => {
+      if (error) throw error;
+      console.log(result);
+      res.render('edit.ejs', { result });
+    })
+  } catch (error) {
+    console.log('Error connecting to database:')
+    res.send('SOMETHING WENT WRONG');
+  }
+})
+
+
+app.patch("/user/:id", (req, res) => {
+  let { id } = req.params;
+  let { password: formPassword, username: newUserName } = req.body;
+  let q = `SELECT * FROM user WHERE id = '${id}'`;
+  try {
+    connection.query(q, (error, result) => {
+      if (error) throw error;
+      let user = result[0];
+      if (formPassword != user.password) {
+        res.send('Password did not match');
+      }
+      else {
+        let q2 = `UPDATE user Set name = '${newUserName}' WHERE id = '${id}'`;
+        connection.query(q2, (error, result) => {
+          if (error) throw error;
+          res.redirect('/user');
+        })
+      }
+    })
+  } catch (error) {
+    console.log('Error connecting to database:')
+    res.send('SOMETHING WENT WRONG');
+  }
+})
+
+
 
 app.listen(8080, () => {
   console.log('Server is running on port 8080');
