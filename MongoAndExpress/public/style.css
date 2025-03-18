@@ -1,0 +1,27 @@
+body{
+    background-color: #212121;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 10px;
+    color: #87f083;
+}
+
+.chats{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: rgb(104, 145, 180);
+    padding: 10px;
+    color: #000;
+    border-radius: 10px;
+    margin: 50px;
+}
+.msg{
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-radius: 10px;
+  color: #000;
+}
+.mark{
+  color: #87f083;
+}
