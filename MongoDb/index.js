@@ -21,9 +21,17 @@ const Employee = mongoose.model('Employee', userSchema);
 
 // User.find({ age: { $eq: 23 } }).then(res => console.log(res));
 
-User.findById('67d7e434f3dd210b1f3e5744')
-  .then(res => console.log(res));
+// User.findById('67d7e434f3dd210b1f3e5744')
+//   .then(res => console.log(res));
 
+// User.updateOne({ name: "John" }, { age: 30 })
+//   .then((res) => {
+//     console.log(res);
+//   }).catch(err => console.log(err));
+
+User.findByIdAndUpdate("67d7e056a1c59d582f777de4", { age: 36 }, { new: true }).then((res) => {
+  console.log(res);
+}).catch(err => console.log(err));
 
 // User.insertMany([
 //   { name: 'Adam', email: "adma@gmail.com", age: 23 },
