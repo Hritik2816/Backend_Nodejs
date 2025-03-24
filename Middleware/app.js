@@ -1,8 +1,14 @@
 const express = require('express')
 const app = express()
 
+// app.use((req, res, next) => {
+//   console.log("This is middleware function");
+//   next()
+// })
+
 app.use((req, res, next) => {
-  console.log("This is middleware function");
+  req.responseTime = new Date(Date.now()).toString()
+  console.log(req.method, req.path, req.responseTime, req.hostname)
   next()
 })
 
