@@ -20,7 +20,7 @@ const orderSchema = new Schema({
 
 const customerSchema = new Schema({
   name: String,
-  order: [{
+  orders: [{
     type: Schema.Types.ObjectId,
     ref: "Order"
   }]
